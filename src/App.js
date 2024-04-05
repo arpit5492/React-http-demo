@@ -2,17 +2,28 @@ import { useState } from 'react';
 import './App.css';
 import User from './components/User';
 import Todos from './components/Todos';
+import Error from './components/Error';
 
 function App() {
   const [users, setUsers] = useState([]);
   const [todos, setTodos] = useState([]);
   const [flag, setFlag] = useState("");
+  const [errFlag, setErrflag] = useState("");
   const fetchUsers = () => {
     fetch("https://jsonplaceholder.typicode.com/users")
-      .then(res => res.json())
+      .then(res => {
+        if(res.ok) {
+          return res.json();
+        } else {
+          throw new Error("Error!!");
+        }
+      })
       .then(json => {
         setUsers(json);
-      });
+      })
+      .catch((error) => {
+        setErrflag(true);
+      })
       setFlag(true);
   }
   // const fetchUsers = async() => {
@@ -22,11 +33,26 @@ function App() {
   // }
   const fetchTodos = () => {
     fetch("https://jsonplaceholder.typicode.com/todos")
-      .then(res => res.json())
+      .then(res => {
+        if(res.ok) {
+          return res.json();
+        } else {
+          throw new Error("Error!!");
+        }
+      })
       .then(json => {
         setTodos(json);
-      });
+      })
+      .catch(error => {
+        setErrflag(true);
+      })
       setFlag(false);
+  }
+
+  if(errFlag){
+    return (
+      <Error />
+    )
   }
   return (
     <div className="App">
